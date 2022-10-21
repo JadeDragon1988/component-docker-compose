@@ -1,0 +1,38 @@
+version: "3.4"
+x-config:
+  host: localhost
+services:
+  #base-component
+
+  mysql57:
+    hostname: mysql_57
+    container_name: mysql_57
+    restart: always # 设置容器自启模式
+    image: mysql:5.7.40
+    expose:
+      - "3306"
+    ports:
+      - "4306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ../config/mysql57/init_script/:/docker-entrypoint-initdb.d/
+      - ../config/mysql57/config/:/etc/mysql/mysql.conf.d/
+      - mysql57:/var/lib/mysql
+    command: mysqld --default-time-zone='+08:00'
+
+  rabbitmq:
+    hostname: rabbitmq
+    container_name: rabbitmq
+    image: rabbitmq:3.9.3-management
+    restart: always
+    ports:
+      - '5672:5672'
+      - '15671:15671'
+      - '15672:15672'
+    volumes:
+      - ../config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ../config/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+
+volumes:
+  mysql57:

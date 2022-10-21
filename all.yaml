@@ -1,0 +1,191 @@
+version: "3.4"
+x-config:
+  host: localhost
+services:
+  #base-component
+
+  mysql57:
+    hostname: mysql_57
+    container_name: mysql_57
+    restart: always # 设置容器自启模式
+    image: mysql:5.7.40
+    expose:
+      - "3306"
+    ports:
+      - "4306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ../config/mysql57/init_script/:/docker-entrypoint-initdb.d/
+      - ../config/mysql57/config/:/etc/mysql/mysql.conf.d/
+      - mysql57:/var/lib/mysql
+    command: mysqld --default-time-zone='+08:00'
+
+  mysql8:
+    hostname: mysql_8
+    container_name: mysql_8
+    restart: always # 设置容器自启模式
+    image: mysql:8.0.31
+    expose:
+      - "3306"
+    ports:
+      - "5306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ../config/mysql8/init_script/:/docker-entrypoint-initdb.d/
+      - ../config/mysql8/config/:/etc/mysql/mysql.conf.d/
+      - mysql8:/var/lib/mysql
+    command: mysqld --default-time-zone='+08:00'
+
+  hornetq:
+    image: 
+    ports:
+      - "5445:5445"
+
+  rabbitmq:
+    hostname: rabbitmq
+    container_name: rabbitmq
+    image: rabbitmq:3.9.3-management
+    restart: always
+    ports:
+      - '5672:5672'
+      - '15671:15671'
+      - '15672:15672'
+    # extra_hosts: # need these for the embedded TLS certificate to work.
+    #   - "rabbitmq-i-vagranto:127.0.0.1"
+    volumes:
+      - ../config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ../config/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+
+  pg-db:
+    labels:
+      com.tradeshift.labels: "middleware,cn-pay"
+    image: ${SUPER_STACK_DOCKER_REPO}/tradeshift-docker-postgres95:26fcfb43f99f6936ffd37bf0938c9644a5c3bac4
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "123"
+      POSTGRES_MAX_CONNECTS: "500"
+    volumes:
+      - ../config/postgres/10_init_db.sh:/docker-entrypoint-initdb.d/10_init_db.sh
+      - pg-db:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      retries: 10
+
+  pg-db-10:
+    labels:
+      com.tradeshift.labels: "middleware,cn-pay"
+    image: ${SUPER_STACK_DOCKER_REPO}/tradeshift-docker-postgres10-xenial:7c5057797ddc28c36e0ff04e45dd35866ac36e51
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "123"
+      POSTGRES_MAX_CONNECTS: "500"
+    volumes:
+      - ../config/pg-db-10/10_init_db.sh:/docker-entrypoint-initdb.d/10_init_db.sh
+      - pg-db-10:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    ports:
+      - "54310:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      retries: 10
+
+  pg-db-12:
+    labels:
+      com.tradeshift.labels: "middleware,cn-pay"
+    image: ${SUPER_STACK_DOCKER_REPO}/postgres:12.3
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "123"
+      POSTGRES_MAX_CONNECTS: "500"
+    volumes:
+      #- ../config/pg-db-12/12_init_db.sh:/docker-entrypoint-initdb.d/12_init_db.sh
+      - ../config/pg-db-12/12_init_db.sql:/docker-entrypoint-initdb.d/12_init_db.sql
+      - pg-db-12:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    ports:
+      - "54311:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      retries: 10
+
+  elasticsearch:
+    labels:
+      com.tradeshift.labels: "middleware,cn-pay"
+    image: ${SUPER_STACK_DOCKER_REPO}/elastic/elasticsearch:1.7.5
+    user: root
+    environment:
+      ES_HEAP_SIZE: "512m"
+    volumes:
+      - elasticsearch175:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  elasticsearch241:
+    labels:
+      com.tradeshift.labels: "middleware,cn-pay"
+    image: ${SUPER_STACK_DOCKER_REPO}/elasticsearch-2.4.1:f35e77a76726650f450ea15b78486ded8113e9fd
+    ports:
+      - "9401:9200"
+      - "9400:9300"
+    volumes:
+      - elasticsearch241:/usr/share/elasticsearch/data
+
+  redis:
+    labels:
+      com.tradeshift.labels: "middleware,cn-pay"
+    image: ${SUPER_STACK_DOCKER_REPO}/redis:4
+    ports:
+      - "6379:6379"
+
+
+  mocks3:
+    labels:
+      com.tradeshift.labels: "middleware,cn-pay"
+    image: ${SUPER_STACK_DOCKER_REPO}/minio/minio:RELEASE.2018-06-29T02-11-29Z
+    volumes:
+      - minio:/minio
+    environment:
+      MINIO_REGION_NAME: cn-north-1
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    ports:
+      - "9090:9000"
+    entrypoint: sh
+    command: >
+      -c 'mkdir -p /minio/contract-service-test-testing-cn
+      /minio/ts-profile-pack-files-test-testing-cn
+      /minio/ts-cn-company-profile-test-testing-cn
+      /minio/ts-fapiao-image-test-testing-cn
+      /minio/ts-fapiao-archive-test-testing-cn
+      /minio/ts-fapiao-report-test-testing-cn
+      /minio/ts-fapiao-notification-test-testing-cn
+      /minio/ts-proforma-reports-test-testing-cn
+      /minio/ts-proforma-files-test-testing-cn
+      /minio/ts-premade-fapiao-upload-files-test-testing-cn
+      /minio/ts-premade-fapiao-upload-reports-test-testing-cn
+      /minio/ts-testing-documents
+      /minio/ts-testing-maillog
+      && /usr/bin/minio server /minio'
+
+
+volumes:
+  minio:
+  pg-db:
+  pg-db-10:
+  pg-db-12:
+  mysql57:
+  elasticsearch175:
+  elasticsearch241:
+  elasticsearch-7-icu:
