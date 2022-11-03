@@ -1,6 +1,4 @@
 version: "3.4"
-x-config:
-  host: localhost
 services:
   #base-component
 
@@ -16,10 +14,9 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - ../config/mysql57/init_script/:/docker-entrypoint-initdb.d/
-      - ../config/mysql57/config/:/etc/mysql/mysql.conf.d/
-      - mysql57:/var/lib/mysql
-    command: mysqld --default-time-zone='+08:00'
+      - ./config/mysql57/init_script/:/docker-entrypoint-initdb.d/
+      - ./config/mysql57/config/:/etc/mysql/mysql.conf.d/
+    command: mysqld --default-time-zone=''+08:00''
 
   rabbitmq:
     hostname: rabbitmq
@@ -31,8 +28,18 @@ services:
       - '15671:15671'
       - '15672:15672'
     volumes:
-      - ../config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
-      - ../config/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+      - ./config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./config/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+
+  redis:
+    hostname: redis
+    container_name: redis
+    image: redis:6.2.7
+    restart: always
+    ports:
+      - "6379:6379"
 
 volumes:
-  mysql57:
+  mysql: null
+  rabbitmq: null
+  component: null
