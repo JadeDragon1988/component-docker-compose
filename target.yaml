@@ -7,6 +7,7 @@ services:
     container_name: mysql_57
     restart: always # 设置容器自启模式
     image: mysql:5.7.40
+    platform: linux/amd64
     expose:
       - "3306"
     ports:
@@ -34,7 +35,7 @@ services:
   redis:
     hostname: redis
     container_name: redis
-    image: redis:6.2.7
+    image: redis:7.0.8
     restart: always
     ports:
       - "6379:6379"
