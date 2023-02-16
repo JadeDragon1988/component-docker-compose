@@ -1,0 +1,1 @@
+docker run --name sentinel  -d -p 8858:8858 -d  bladex/sentinel-dashboard:1.8.0 -d
