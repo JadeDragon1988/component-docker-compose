@@ -13,6 +13,8 @@ services:
       - "5306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=welcome1
     volumes:
       - ../config/mysql8/init_script/:/docker-entrypoint-initdb.d/
       - ../config/mysql8/config/:/etc/mysql/mysql.conf.d/
