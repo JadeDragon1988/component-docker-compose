@@ -29,15 +29,15 @@ services:
   rabbitmq:
     hostname: rabbitmq
     container_name: rabbitmq
-    image: rabbitmq:3.9.3-management
+    image: rabbitmq:3.11.10-management
     restart: always
     ports:
       - '5672:5672'
-      - '15671:15671'
       - '15672:15672'
-    volumes:
-      - ./config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
-      - ./config/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: 123456
+      RABBITMQ_DEFAULT_VHOST: coupler
 
   redis:
     hostname: redis
