@@ -1,4 +1,4 @@
-version: "3.4"
+version: "3.8"
 services:
   #base-component
 
@@ -13,12 +13,18 @@ services:
       - "5306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=welcome1
+    #      - MYSQL_USER=admin
+    #      - MYSQL_PASSWORD=welcome1
     volumes:
-      - ../config/mysql8/init_script/:/docker-entrypoint-initdb.d/
-      - ../config/mysql8/config/:/etc/mysql/mysql.conf.d/
+      - ./config/mysql8/init_script/:/docker-entrypoint-initdb.d/
+      - ./config/mysql8/config/:/etc/mysql/mysql.conf.d/
     command: mysqld --default-time-zone=''+08:00''
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u porta --password=porta
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 55
 
   rabbitmq:
     hostname: rabbitmq
@@ -61,9 +67,42 @@ services:
       timeout: 20s
       retries: 3
 
+#  nacos-server:
+#    hostname: nacos-server
+#    container_name: nacos-server
+#    image: nacos/nacos-server:v2.2.2-slim
+#    platform: linux/amd64
+#    restart: always
+#    env_file:
+#      - ./config/nacos/custom-application-config.env
+#    environment:
+#      MODE: standalone
+#      NACOS_APPLICATION_PORT: 8848
+#      SPRING_DATASOURCE_PLATFORM: mysql
+#      MYSQL_SERVICE_HOST: localhost
+#      MYSQL_SERVICE_PORT: 5306
+#      MYSQL_SERVICE_DB_NAME: nacos
+#      MYSQL_SERVICE_USER: porta
+#      MYSQL_SERVICE_PASSWORD: porta
+#      MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+#      JVM_XMS: 256m
+#      JVM_XMX: 256m
+#      JVM_XMN: 128m
+#      JVM_MS: 128m
+#      JVM_MMS: 128m
+#    volumes:
+#      - /Users/jade/Documents/javaSoftware/dockerdata/nacos/logs:/home/nacos/logs
+#    ports:
+#      - '8848:8848'
+#      - '9848:9848'
+#      - '9849:9849'
+#    depends_on:
+#      mysql8:
+#        condition: service_healthy
 
 volumes:
   data: null
   mysql: null
   rabbitmq: null
   component: null
+

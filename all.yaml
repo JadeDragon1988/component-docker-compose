@@ -16,31 +16,34 @@ services:
       - "4306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=porta
+      - MYSQL_PASSWORD=porta
     volumes:
-      - ../config/mysql57/init_script/:/docker-entrypoint-initdb.d/
-      - ../config/mysql57/config/:/etc/mysql/mysql.conf.d/
+      - ./config/mysql57/init_script/:/docker-entrypoint-initdb.d/
+      - ./config/mysql57/config/:/etc/mysql/mysql.conf.d/
       - mysql57:/var/lib/mysql
     command: mysqld --default-time-zone='+08:00'
 
   mysql8:
     hostname: mysql_8
     container_name: mysql_8
-    restart: always # 设置容器自启模式
     image: mysql:8.0.32
+    restart: always # 设置容器自启模式
     expose:
       - "3306"
     ports:
       - "5306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=welcome1
     volumes:
-      - ../config/mysql8/init_script/:/docker-entrypoint-initdb.d/
-      - ../config/mysql8/config/:/etc/mysql/mysql.conf.d/
-      - mysql8:/var/lib/mysql
-    command: mysqld --default-time-zone='+08:00'
+      - ./config/mysql8/init_script/:/docker-entrypoint-initdb.d/
+      - ./config/mysql8/config/:/etc/mysql/mysql.conf.d/
+    command: mysqld --default-time-zone=''+08:00''
 
   hornetq:
-    image: 
+    image:
     ports:
       - "5445:5445"
 
@@ -56,8 +59,8 @@ services:
     # extra_hosts: # need these for the embedded TLS certificate to work.
     #   - "rabbitmq-i-vagranto:127.0.0.1"
     volumes:
-      - ../config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
-      - ../config/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+      - ./config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./config/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
 
   pg-db:
     labels:
@@ -68,14 +71,14 @@ services:
       POSTGRES_PASSWORD: "123"
       POSTGRES_MAX_CONNECTS: "500"
     volumes:
-      - ../config/postgres/10_init_db.sh:/docker-entrypoint-initdb.d/10_init_db.sh
+      - ./config/postgres/10_init_db.sh:/docker-entrypoint-initdb.d/10_init_db.sh
       - pg-db:/var/lib/postgresql/data
     expose:
       - "5432"
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready"]
+      test: [ "CMD", "pg_isready" ]
       interval: 10s
       retries: 10
 
@@ -88,14 +91,14 @@ services:
       POSTGRES_PASSWORD: "123"
       POSTGRES_MAX_CONNECTS: "500"
     volumes:
-      - ../config/pg-db-10/10_init_db.sh:/docker-entrypoint-initdb.d/10_init_db.sh
+      - ./config/pg-db-10/10_init_db.sh:/docker-entrypoint-initdb.d/10_init_db.sh
       - pg-db-10:/var/lib/postgresql/data
     expose:
       - "5432"
     ports:
       - "54310:5432"
     healthcheck:
-      test: ["CMD", "pg_isready"]
+      test: [ "CMD", "pg_isready" ]
       interval: 10s
       retries: 10
 
@@ -108,15 +111,15 @@ services:
       POSTGRES_PASSWORD: "123"
       POSTGRES_MAX_CONNECTS: "500"
     volumes:
-      #- ../config/pg-db-12/12_init_db.sh:/docker-entrypoint-initdb.d/12_init_db.sh
-      - ../config/pg-db-12/12_init_db.sql:/docker-entrypoint-initdb.d/12_init_db.sql
+      #- ./config/pg-db-12/12_init_db.sh:/docker-entrypoint-initdb.d/12_init_db.sh
+      - ./config/pg-db-12/12_init_db.sql:/docker-entrypoint-initdb.d/12_init_db.sql
       - pg-db-12:/var/lib/postgresql/data
     expose:
       - "5432"
     ports:
       - "54311:5432"
     healthcheck:
-      test: ["CMD", "pg_isready"]
+      test: [ "CMD", "pg_isready" ]
       interval: 10s
       retries: 10
 
@@ -152,7 +155,7 @@ services:
   minio:
     hostname: minio
     image: minio/minio:RELEASE.2021-06-17T00-10-46Z
-#    image: minio/minio:RELEASE.2023-02-10T18-48-39Z
+    #    image: minio/minio:RELEASE.2023-02-10T18-48-39Z
     volumes:
       - minio:/minio
     environment:
@@ -166,6 +169,41 @@ services:
       -c 'mkdir -p /minio/cn
       && /usr/bin/minio server /minio'
 
+  nacos-server:
+    hostname: nacos-server
+    container_name: nacos-server
+    image: nacos/nacos-server:v2.2.0
+    restart: always
+    environment:
+      MODE: standalone
+      NACOS_APPLICATION_PORT: 8848
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql_8
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_DB_NAME: nacos
+      MYSQL_SERVICE_USER: porta
+      MYSQL_SERVICE_PASSWORD: porta
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+      JVM_XMN: 128m
+      JVM_MS: 128m
+      JVM_MMS: 128m
+    ports:
+      - '8848:8848'
+      - '9848:9848'
+      - '9849:9849'
+    depends_on:
+      - mysql8
+    # run with the parameter：--compatibility
+    deploy:
+      # Configures resource constraints.
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4096M
+        reservations:
+          # cpus: '0.50'
+          memory: 1024M
 
 volumes:
   minio:

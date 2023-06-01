@@ -3,9 +3,11 @@
 # select * from mysql.user;
 
 CREATE USER 'porta'@'%' IDENTIFIED BY 'porta';
-GRANT ALL PRIVILEGES ON *.* TO 'porta'@'%';
 
-CREATE DATABASE if not exists portal_site CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE DATABASE IF NOT EXISTS nacos DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE if NOT EXISTS portal DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+GRANT ALL PRIVILEGES ON *.* TO 'porta'@'%';
 
 flush privileges;
 commit;
