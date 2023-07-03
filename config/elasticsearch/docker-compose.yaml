@@ -1,0 +1,36 @@
+version: "3.5"
+services:
+  elasticsearch:
+    image: elasticsearch:7.17.7
+    container_name: elasticsearch
+    restart: always
+    # environment:
+      # default UTC
+      # TZ: Asia/Shanghai
+    environment:
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+      "discovery.type": "single-node"
+      "xpack.security.enabled": "true"
+#      "ELASTIC_PASSWORD": "zNNS@dX*g2a3swVQ"
+      "ELASTIC_PASSWORD": "123456"
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    volumes:
+      - "/data/docker/elasticsearch/data/:/usr/share/elasticsearch/data/"
+      - "/data/docker/elasticsearch/logs/:/usr/share/elasticsearch/logs/"
+      - "./plugins/:/usr/share/elasticsearch/plugins/"
+    # run with the parameter：--compatibility
+    deploy:
+      # Configures resource constraints.
+      resources:
+#        limits:
+#          cpus: '1'
+#          memory: 2G
+        reservations:
+          # cpus: '0.25'
+          memory: 512M
+networks:
+  default:
+    external: true
+    name: yonyou
