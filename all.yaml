@@ -124,27 +124,30 @@ services:
       retries: 10
 
   elasticsearch:
-    labels:
-      com.tradeshift.labels: "middleware,cn-pay"
-    image: ${SUPER_STACK_DOCKER_REPO}/elastic/elasticsearch:1.7.5
-    user: root
+    image: elasticsearch:7.17.7
+    container_name: elasticsearch
+    restart: always
     environment:
-      ES_HEAP_SIZE: "512m"
-    volumes:
-      - elasticsearch175:/usr/share/elasticsearch/data
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+      "discovery.type": "single-node"
+      "xpack.security.enabled": "true"
+      "ELASTIC_PASSWORD": "zNNS@dX*g2a3swVQ"
     ports:
-      - "9200:9200"
-      - "9300:9300"
-
-  elasticsearch241:
-    labels:
-      com.tradeshift.labels: "middleware,cn-pay"
-    image: ${SUPER_STACK_DOCKER_REPO}/elasticsearch-2.4.1:f35e77a76726650f450ea15b78486ded8113e9fd
-    ports:
-      - "9401:9200"
-      - "9400:9300"
+      - '9200:9200'
+      - '9300:9300'
     volumes:
-      - elasticsearch241:/usr/share/elasticsearch/data
+      - "/Users/jade/Documents/javaSoftware/dockerdata/elasticsearch/data:/usr/share/elasticsearch/data/"
+      - "/Users/jade/Documents/javaSoftware/dockerdata/elasticsearch/logs:/usr/share/elasticsearch/logs/"
+      - "./plugins/:/usr/share/elasticsearch/plugins/"
+    deploy:
+      # Configures resource constraints.
+      resources:
+        #        limits:
+        #          cpus: '1'
+        #          memory: 2G
+        reservations:
+          # cpus: '0.25'
+          memory: 512M
 
   redis:
     container_name: redis

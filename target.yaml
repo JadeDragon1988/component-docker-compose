@@ -80,8 +80,8 @@ services:
       - '9200:9200'
       - '9300:9300'
     volumes:
-      - "./data/:/usr/share/elasticsearch/data/"
-      - "./logs/:/usr/share/elasticsearch/logs/"
+      - "/Users/jade/Documents/javaSoftware/dockerdata/elasticsearch/data:/usr/share/elasticsearch/data/"
+      - "/Users/jade/Documents/javaSoftware/dockerdata/elasticsearch/logs:/usr/share/elasticsearch/logs/"
       - "./plugins/:/usr/share/elasticsearch/plugins/"
     deploy:
       # Configures resource constraints.
@@ -92,39 +92,6 @@ services:
         reservations:
           # cpus: '0.25'
           memory: 512M
-
-#  nacos-server:
-#    hostname: nacos-server
-#    container_name: nacos-server
-#    image: nacos/nacos-server:v2.2.2-slim
-#    platform: linux/amd64
-#    restart: always
-#    env_file:
-#      - ./config/nacos/custom-application-config.env
-#    environment:
-#      MODE: standalone
-#      NACOS_APPLICATION_PORT: 8848
-#      SPRING_DATASOURCE_PLATFORM: mysql
-#      MYSQL_SERVICE_HOST: localhost
-#      MYSQL_SERVICE_PORT: 5306
-#      MYSQL_SERVICE_DB_NAME: nacos
-#      MYSQL_SERVICE_USER: porta
-#      MYSQL_SERVICE_PASSWORD: porta
-#      MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-#      JVM_XMS: 256m
-#      JVM_XMX: 256m
-#      JVM_XMN: 128m
-#      JVM_MS: 128m
-#      JVM_MMS: 128m
-#    volumes:
-#      - /Users/jade/Documents/javaSoftware/dockerdata/nacos/logs:/home/nacos/logs
-#    ports:
-#      - '8848:8848'
-#      - '9848:9848'
-#      - '9849:9849'
-#    depends_on:
-#      mysql8:
-#        condition: service_healthy
 
 volumes:
   data: null
