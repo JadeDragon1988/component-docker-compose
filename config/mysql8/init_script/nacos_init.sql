@@ -1,7 +1,7 @@
-use nacos_config;
+use nacos;
 
 /******************************************/
-/*   数据库全名 = nacos_config   */
+/*   数据库全名 = nacos   */
 /*   表名称 = config_info   */
 /******************************************/
 CREATE TABLE `config_info` (
