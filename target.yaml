@@ -106,7 +106,7 @@ services:
       MYSQL_SERVICE_DB_NAME: nacos
       MYSQL_SERVICE_USER: porta
       MYSQL_SERVICE_PASSWORD: porta
-      MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai
+      MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&serverTimezone=GMT%2B8
       JVM_XMS: 128m
       JVM_XMX: 128m
       JVM_XMN: 64m
@@ -116,16 +116,6 @@ services:
       - '8848:8848'
       - '9848:9848'
       - '9849:9849'
-    # run with the parameter：--compatibility
-    deploy:
-      # Configures resource constraints.
-      resources:
-        #        limits:
-        #          cpus: '2'
-        #          memory: 256m
-        reservations:
-          # cpus: '0.50'
-          memory: 128M
 
 volumes:
   data: null

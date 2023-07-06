@@ -173,40 +173,34 @@ services:
       && /usr/bin/minio server /minio'
 
   nacos-server:
-    hostname: nacos-server
+    image: nacos/nacos-server:v2.2.0-slim
     container_name: nacos-server
-    image: nacos/nacos-server:v2.2.0
     restart: always
     environment:
       MODE: standalone
       NACOS_APPLICATION_PORT: 8848
       SPRING_DATASOURCE_PLATFORM: mysql
-      MYSQL_SERVICE_HOST: mysql_8
-      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_HOST: 192.168.2.11
+      MYSQL_SERVICE_PORT: 5306
       MYSQL_SERVICE_DB_NAME: nacos
       MYSQL_SERVICE_USER: porta
       MYSQL_SERVICE_PASSWORD: porta
-      JVM_XMS: 256m
-      JVM_XMX: 256m
-      JVM_XMN: 128m
-      JVM_MS: 128m
-      JVM_MMS: 128m
+      MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&serverTimezone=GMT%2B8
+      JVM_XMS: 128m
+      JVM_XMX: 128m
+      JVM_XMN: 64m
+    depends_on:
+      - mysql8
     ports:
       - '8848:8848'
       - '9848:9848'
       - '9849:9849'
-    depends_on:
-      - mysql8
     # run with the parameter：--compatibility
     deploy:
       # Configures resource constraints.
       resources:
-        limits:
-          cpus: '2'
-          memory: 4096M
         reservations:
-          # cpus: '0.50'
-          memory: 1024M
+          memory: 128M
 
 volumes:
   minio:
