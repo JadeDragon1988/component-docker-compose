@@ -1,0 +1,26 @@
+version: "3.5"
+services:
+  nacos-server:
+    image: nacos/nacos-server:v2.2.0-slim
+    container_name: nacos-server
+    restart: always
+    environment:
+      MODE: standalone
+      NACOS_APPLICATION_PORT: 8848
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: 192.168.2.11
+      MYSQL_SERVICE_PORT: 5306
+      MYSQL_SERVICE_DB_NAME: nacos
+      MYSQL_SERVICE_USER: porta
+      MYSQL_SERVICE_PASSWORD: porta
+      JVM_XMS: 128m
+      JVM_XMX: 128m
+      JVM_XMN: 64m
+    ports:
+      - '8848:8848'
+      - '9848:9848'
+      - '9849:9849'
+    deploy:
+      resources:
+        reservations:
+          memory: 128M
