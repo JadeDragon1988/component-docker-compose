@@ -50,17 +50,21 @@ services:
   minio:
     hostname: minio
     container_name: minio
-    image: minio/minio:RELEASE.2021-06-17T00-10-46Z
+    image: minio/minio:RELEASE.2023-02-27T18-10-45Z
     restart: always
     ports:
       - "9090:9000"
+      - '9001:9001'
     environment:
+      TZ: Asia/Shanghai
       MINIO_ROOT_USER: minio
       MINIO_ROOT_PASSWORD: minio123
+      MINIO_DEFAULT_BUCKETS: dev
     volumes:
       - /Users/jade/Documents/javaSoftware/dockerdata/minio/data:/data
       - /Users/jade/Documents/javaSoftware/dockerdata/minio/config:/etc/minio
-    command: server /data
+    command: server --console-address ':9001' /mnt/data
+    privileged: true
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 30s
@@ -74,8 +78,7 @@ services:
     environment:
       ES_JAVA_OPTS: "-Xms1g -Xmx1g"
       "discovery.type": "single-node"
-      "xpack.security.enabled": "true"
-      "ELASTIC_PASSWORD": "zNNS@dX*g2a3swVQ"
+      "xpack.security.enabled": false
     ports:
       - '9200:9200'
       - '9300:9300'
@@ -93,32 +96,32 @@ services:
           # cpus: '0.25'
           memory: 512M
 
-  nacos-server:
-    image: nacos/nacos-server:v2.2.0-slim
-    container_name: nacos-server
-    restart: always
-    environment:
-      MODE: standalone
-      NACOS_APPLICATION_PORT: 8848
-      SPRING_DATASOURCE_PLATFORM: mysql
-      MYSQL_SERVICE_HOST: 192.168.2.11
-      MYSQL_SERVICE_PORT: 5306
-      MYSQL_SERVICE_DB_NAME: nacos
-      MYSQL_SERVICE_USER: porta
-      MYSQL_SERVICE_PASSWORD: porta
-      MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&serverTimezone=GMT%2B8
-      JVM_XMS: 128m
-      JVM_XMX: 128m
-      JVM_XMN: 64m
-    depends_on:
-      - mysql8
-    ports:
-      - '8848:8848'
-      - '9848:9848'
-      - '9849:9849'
+  # nacos-server:
+  #   image: nacos/nacos-server:v2.2.0-slim
+  #   container_name: nacos-server
+  #   restart: always
+  #   environment:
+  #     MODE: standalone
+  #     NACOS_APPLICATION_PORT: 8848
+  #     SPRING_DATASOURCE_PLATFORM: mysql
+  #     MYSQL_SERVICE_HOST: 192.168.2.11
+  #     MYSQL_SERVICE_PORT: 5306
+  #     MYSQL_SERVICE_DB_NAME: nacos
+  #     MYSQL_SERVICE_USER: porta
+  #     MYSQL_SERVICE_PASSWORD: porta
+  #     MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&serverTimezone=GMT%2B8
+  #     JVM_XMS: 128m
+  #     JVM_XMX: 128m
+  #     JVM_XMN: 64m
+  #   depends_on:
+  #     - mysql8
+  #   ports:
+  #     - '8848:8848'
+  #     - '9848:9848'
+  #     - '9849:9849'
 
 volumes:
-  data: null
+  data:
   mysql: null
   rabbitmq: null
   component: null
