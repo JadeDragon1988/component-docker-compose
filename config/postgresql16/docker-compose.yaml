@@ -1,0 +1,26 @@
+version: "3.5"
+services:
+  postgres:
+    image: postgres:16.2-alpine3.19
+    container_name: postgres
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: spider
+      POSTGRES_PASSWORD: Th4UUUehXDBELN@y
+    volumes:
+      - "/data/docker/postgres/data/:/var/lib/postgresql/data/"
+    deploy:
+      # Configures resource constraints.
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4096M
+        reservations:
+          # cpus: '0.50'
+          memory: 1024M
+networks:
+  default:
+    external: true
+    name: yonyou
