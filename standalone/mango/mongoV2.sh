@@ -2,11 +2,10 @@ docker run -it \
 	--name mongodb-5.0.23 \
     --privileged \
     -p 27017:27017 \
-    -e MONGODB_INITDB_ROOT_USERNAME=porta \
-    -e MONGODB_INITDB_ROOT_PASSWORD=porta \
     -v /Users/jade/Documents/javaSoftware/dockerdata/mongodb/5.0.23/data:/data/db \
     -v /Users/jade/Documents/javaSoftware/dockerdata/mongodb/5.0.23/conf:/data/configdb \
     -v /Users/jade/Documents/javaSoftware/dockerdata/mongodb/5.0.23/logs:/data/log  \
     --privileged=true \
     --restart always \
+    -v /mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js \
     -d mongodb/mongodb-community-server:5.0.23-ubi8 \
