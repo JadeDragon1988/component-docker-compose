@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   #base-component
 
@@ -72,7 +71,7 @@ services:
       retries: 3
 
   elasticsearch:
-    image: elasticsearch:7.17.7
+    image: elasticsearch:7.17.21
     container_name: elasticsearch
     restart: always
     environment:
@@ -85,7 +84,7 @@ services:
     volumes:
       - "/Users/jade/Documents/javaSoftware/dockerdata/elasticsearch/data:/usr/share/elasticsearch/data/"
       - "/Users/jade/Documents/javaSoftware/dockerdata/elasticsearch/logs:/usr/share/elasticsearch/logs/"
-      - "./plugins/:/usr/share/elasticsearch/plugins/"
+      - "./config/elasticsearch/plugins/:/usr/share/elasticsearch/plugins/"
     deploy:
       # Configures resource constraints.
       resources:
@@ -95,6 +94,17 @@ services:
         reservations:
           # cpus: '0.25'
           memory: 512M
+
+#  kibana:
+#    image: kibana:7.17.21
+#    container_name: kibana
+#    restart: always
+#    depends_on:
+#      - elasticsearch
+#    environment:
+#      ELASTICSEARCH_URL: http://elasticsearch:9200
+#    ports:
+#      - '5601:5601'
 
   # nacos-server:
   #   image: nacos/nacos-server:v2.2.0-slim
