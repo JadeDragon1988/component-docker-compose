@@ -35,7 +35,7 @@ services:
       - '15672:15672'
     environment:
       RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: 123456
+      RABBITMQ_DEFAULT_PASS: welcome1
       RABBITMQ_DEFAULT_VHOST: vhost_jade
 
   redis:
