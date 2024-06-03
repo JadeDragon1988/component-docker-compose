@@ -43,8 +43,19 @@ services:
     container_name: redis
     image: redis:7.0.8
     restart: always
+    command: ["redis-server", "--appendonly", "yes", "--requirepass","welcome1"]
     ports:
       - "6379:6379"
+    deploy:
+      # Configures resource constraints.
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          # cpus: '0.25'
+          memory: 512M
+
 
   minio:
     hostname: minio
